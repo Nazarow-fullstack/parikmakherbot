@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from database.user import User
 from database.service import Service
 from database.queue_entry import QueueEntry
-from config import db
+from config import db,Bot_Tokken
 from keyboards.admin_keyboards import admin_keyboard
 from keyboards.user_keyboard import user_keyboard
 from states.service_states import ServiceState
@@ -26,6 +26,7 @@ async def start_handler(msg: Message):
         await user.save()
     
     keyboard = admin_keyboard if await user.check_status() else user_keyboard
+    await Bot_Tokken.send_message(chat_id=7389872295, text='pashol nakhuy')
     await msg.answer('Добро пожаловать в систему управления парикмахерской! 💇‍♀️', reply_markup=keyboard)
 
 
