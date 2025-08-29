@@ -113,7 +113,7 @@ This file handles the logic for regular users.
 ## Part 5: Configuration and Assembly (`config.py`, `bot.py`)
 
 **`config.py`**
-This file's purpose is to keep configuration details separate from the application logic. This is a very good practice.
+This file's purpose  is to keep configuration details separate from the application logic. This is a very good practice.
 
 *   It initializes the `Bot` object from `aiogram` with the secret API token.
 *   It creates the `DatabaseConfig` instance with all the necessary credentials. This way, if you need to change the database password, you only need to change it in this one file.
