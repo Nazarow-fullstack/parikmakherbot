@@ -94,9 +94,7 @@ async def service_price_handler(msg: Message, state: FSMContext):
 @admin_router.message(lambda m: m.text == '📋 Посмотреть услуги')
 async def view_services_admin_handler(msg: Message):
     user = User(msg.from_user.id, msg.from_user.username, '', db)
-    if not await user.check_status():
-        await msg.answer('❌ У вас нет прав администратора!')
-        return
+    is_admin = await user.check_status()
     
     services = await Service.get_services(db)
     if not services:
@@ -104,21 +102,28 @@ async def view_services_admin_handler(msg: Message):
         return
     
     for service in services:
-        keyboard = InlineKeyboardMarkup(
-            inline_keyboard=[
-                [
-                    InlineKeyboardButton(text='✏️ Редактировать', callback_data=f'update_service={service["id"]}'),
-                    InlineKeyboardButton(text='🗑 Удалить', callback_data=f'delete_service={service["id"]}')
+     
+        if is_admin:
+            keyboard = InlineKeyboardMarkup(
+                inline_keyboard=[
+                    [
+                        InlineKeyboardButton(text='✏️ Редактировать', callback_data=f'update_service={service["id"]}'),
+                        InlineKeyboardButton(text='🗑 Удалить', callback_data=f'delete_service={service["id"]}')
+                    ]
                 ]
-            ]
-        )
-        
-        await msg.answer(
-            f"🔹 {service['name']}\n"
-            f"⏱ Длительность: {service['duration']} мин\n"
-            f"💰 Цена: {service['price']} руб.",
-            reply_markup=keyboard
-        )
+            )
+            await msg.answer(
+                f"🔹 {service['name']}\n"
+                f"⏱ Длительность: {service['duration']} мин\n"
+                f"💰 Цена: {service['price']} руб.",
+                reply_markup=keyboard
+            )
+        else:
+            await msg.answer(
+                f"🔹 {service['name']}\n"
+                f"⏱ Длительность: {service['duration']} мин\n"
+                f"💰 Цена: {service['price']} руб."
+            )
 
 
 @admin_router.callback_query(F.data.contains('delete_service'))
