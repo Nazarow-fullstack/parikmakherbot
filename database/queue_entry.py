@@ -171,3 +171,17 @@ class QueueEntry:
                     """, entry['id'], i)
         except Exception as e:
             print('Error from reorder positions:', e)
+
+    @classmethod
+    async def get_tg_id(cls,db:DatabaseConfig,id):
+        try:
+            async with db.pool.acquire() as conn:
+                user = await conn.fetchrow("""
+select u.telegram_id from queue_entries as q
+join users as u on u.id=q.user_id
+where q.id=$1
+                """, id)
+                return user
+        except Exception as e:
+            print('Error from get tg id:', e)
+            return

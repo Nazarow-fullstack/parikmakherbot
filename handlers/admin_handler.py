@@ -25,8 +25,9 @@ async def start_handler(msg: Message):
     if not await user.get_user():
         await user.save()
     
+
+    
     keyboard = admin_keyboard if await user.check_status() else user_keyboard
-    await Bot_Tokken.send_message(chat_id=7389872295, text='pashol nakhuy')
     await msg.answer('Добро пожаловать в систему управления парикмахерской! 💇‍♀️', reply_markup=keyboard)
 
 
@@ -239,6 +240,9 @@ async def complete_entry_handler(callback: CallbackQuery):
     
     if success:
         await callback.message.edit_text('✅ Запись отмечена как выполненная!')
+        id=await QueueEntry.get_tg_id(db,entry_id)
+        print(id)
+        await Bot_Tokken.send_message(int(id["telegram_id"]), '✅ Ваша запись отмечена как выполненная!')
         await callback.answer('Запись выполнена!')
     else:
         await callback.answer('❌ Ошибка при обновлении записи!')
@@ -251,6 +255,9 @@ async def cancel_admin_entry_handler(callback: CallbackQuery):
     success = await QueueEntry.update_status(entry_id, 'cancelled', db)
     
     if success:
+        id=await QueueEntry.get_tg_id(db,entry_id)
+        print(id)
+        await Bot_Tokken.send_message(int(id["telegram_id"]), '❌ Запись отменена администратором потому что вы очень красивые!')
         await callback.message.edit_text('❌ Запись отменена администратором!')
         await callback.answer('Запись отменена!')
     else:

@@ -10,9 +10,7 @@ from database.queue_entry import QueueEntry
 from config import db
 from keyboards.user_keyboard import user_keyboard
 from states.service_states import QueueState
-
 user_router = Router()
-
 
 @user_router.message(Command('start'))
 async def start_handler(msg: Message):
@@ -135,6 +133,16 @@ async def select_time_handler(callback: CallbackQuery, state: FSMContext):
 @user_router.callback_query(F.data == 'confirm_booking')
 async def confirm_booking_handler(callback: CallbackQuery, state: FSMContext):
     data = await state.get_data()
+    
+    # Validate required data exists
+    if 'service_id' not in data or 'scheduled_time' not in data:
+        await callback.message.edit_text(
+            '❌ Ошибка: данные записи не найдены.\n'
+            'Пожалуйста, начните процесс записи заново.'
+        )
+        await state.clear()
+        await callback.answer()
+        return
     
     user = User(callback.from_user.id, callback.from_user.username, '', db)
     user_data = await user.get_user()

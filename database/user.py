@@ -1,6 +1,5 @@
 from .db import DatabaseConfig
 
-
 class User:
     def __init__(self, telegram_id, username, full_name, db: DatabaseConfig):
         self.telegram_id = telegram_id
@@ -20,6 +19,7 @@ class User:
         except Exception as e:
             print('Error from user save:', e)
     
+
     async def get_user(self):
         try:
             async with self.db.pool.acquire() as conn:
